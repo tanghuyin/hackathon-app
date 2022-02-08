@@ -7,6 +7,7 @@ import {
   FlatList,
   RefreshControl,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 import {
   getAuth,
@@ -43,9 +44,9 @@ export const CaseScreen = () => {
     const [text, onChangeText] = useState(data.comments);
     return (
       <View style={styles.item}>
-        <Text style={styles.title}>{data.email}</Text>
-        <Text style={styles.title}>{data.category.name}</Text>
-        <Text style={styles.title}>{data.time}</Text>
+        <Text style={styles.title}>Reporter: {data.email}</Text>
+        <Text style={styles.title}>Case Type: {data.category.name}</Text>
+        <Text style={styles.title}>Time: {data.time}</Text>
         {getAuth().currentUser?.email === data.email ? (
           <View>
             <TextInput
@@ -76,11 +77,11 @@ export const CaseScreen = () => {
               }}
               style={[styles.button, styles.buttonOutline]}
             >
-              <Text>Update</Text>
+              <Text style={styles.buttonText}>Update</Text>
             </TouchableOpacity>
           </View>
         ) : (
-          <Text style={styles.title}>{comments}</Text>
+          <Text style={styles.title}>Comments: {comments}</Text>
         )}
       </View>
     );
@@ -88,11 +89,17 @@ export const CaseScreen = () => {
 
   const renderItem = ({ item }) => <Item data={item} />;
 
+  const handleEmpty = () => {
+    return <Text style={styles.title}> No Case present!</Text>;
+  };
+
   return (
     <View style={styles.container}>
       <FlatList
+        numColumns={1}
         data={caseList}
         renderItem={renderItem}
+        ListEmptyComponent={handleEmpty}
         keyExtractor={(item) => item.id}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={loadData} />
@@ -109,17 +116,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   item: {
-    backgroundColor: '#f9c2ff',
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
-    width: '100%',
+    width: Dimensions.get('screen').width - 10,
+    flex: 1,
+    backgroundColor: 'white',
+    padding: 10,
+    marginVertical: 5,
+    borderWidth: 1,
+    borderRadius: 10,
   },
   title: {
     fontSize: 16,
   },
   input: {
-    height: 40,
+    height: 30,
     margin: 12,
     borderWidth: 1,
     padding: 10,
@@ -127,9 +136,14 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#0782F9',
     width: '60%',
-    padding: 15,
+    padding: 10,
     borderRadius: 10,
     alignItems: 'center',
-    marginTop: 5,
+    marginTop: 3,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: '600',
+    fontSize: 15,
   },
 });
